@@ -1,0 +1,23 @@
+@import './flex.scss';
+@import './mp.scss';
+body {
+  background: #dddddd;
+  padding: 20px;
+}
+.re-view {
+  padding: 15px;
+  border-radius: 4px;
+  background: #ffffff;
+  .ant-form-item:last-child {
+    margin-right: 0;
+  }
+  .re-table {
+    width: 100%;
+  }
+  .table-action-btn {
+    padding: 4px 10px;
+  }
+  .ant-pagination-options-quick-jumper input {
+    margin-right: 0;
+  }
+}

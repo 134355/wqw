@@ -1,0 +1,31 @@
+$name-list: margin padding;
+$short-name: m p;
+$gap: 5 10 15 20 25 30 35 40;
+$type: top bottom left right lr tb tblr;
+
+@each $prefix in $short-name {
+  $i: index($short-name, $prefix);
+  @each $size in $gap {
+    @each $name in $type {
+      @if $name == lr {
+        .#{$prefix}-#{$name}-#{$size} {
+          #{nth($name-list, $i)}-left: #{$size}px;
+          #{nth($name-list, $i)}-right: #{$size}px;
+        }
+      } @else if $name == tb {
+        .#{$prefix}-#{$name}-#{$size} {
+          #{nth($name-list, $i)}-top: #{$size}px;
+          #{nth($name-list, $i)}-bottom: #{$size}px;
+        }
+      } @else if $name == tblr {
+        .#{$prefix}-#{$name}-#{$size} {
+          #{nth($name-list, $i)}: #{$size}px;
+        }
+      } @else {
+        .#{$prefix}-#{$name}-#{$size} {
+          #{nth($name-list, $i)}-#{$name}: #{$size}px;
+        }
+      }
+    }
+  }
+}
