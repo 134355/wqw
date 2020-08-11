@@ -1,9 +1,10 @@
 import React, {Component} from 'react'
-import { Table, Button, Popconfirm } from 'antd'
+import { Table, Button, Popconfirm, Tooltip, Icon } from 'antd'
 import { default as FormOutlined } from '@ant-design/icons/lib/icons/FormOutlined'
 import { default as DeleteOutlined } from '@ant-design/icons/lib/icons/DeleteOutlined'
+import { default as QuestionCircleOutlined } from '@ant-design/icons/lib/icons/QuestionCircleOutlined'
 import ReViewContext from './ReViewContext'
-import { isString } from './utils'
+import { isString, isObject } from './utils'
 
 export default class ReTable extends Component {
   constructor(props) {
@@ -74,14 +75,24 @@ export default class ReTable extends Component {
   }
 
   render () {
-    const { table: { columns, action, rowSelection }, data } = this.context.state
-    let newColumns = [...columns]
+    const { table: { columns, action, rowSelection, rowKey, ...props }, data } = this.context.state
+    let newColumns = columns.map(item => {
+      if (isObject(item.tooltip)) {
+        item.title = (
+          <Tooltip title={item.tooltip.content}>
+            {item.tooltip.title}
+            <QuestionCircleOutlined className="question" />
+          </Tooltip>
+        )
+      }
+      return item
+    })
     if (action.is !== false) {
       newColumns = [...columns, this.renderBtn(action)]
     }
     
     return (
-      <Table rowSelection={rowSelection} className="re-table" columns={newColumns} dataSource={data} pagination={false} />
+      <Table {...props} rowKey={rowKey} rowSelection={rowSelection} className="re-table" columns={newColumns} dataSource={data} pagination={false} />
     )
   }
 }

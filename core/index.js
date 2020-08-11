@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Row, Spin, message } from 'antd'
 
-import Action from './Action'
+import ReAction from './ReAction'
 import ReForm from './ReForm'
 import ReTable from './ReTable'
 import RePagination from './RePagination'
@@ -18,6 +18,7 @@ export default class ReView extends Component {
     
     this.state = {
       service: {},
+      callback: {},
       ids: '',
       addOrEdit: true,
       data: [],
@@ -31,13 +32,14 @@ export default class ReView extends Component {
         },
         rowSelection: {
           type: 'checkbox',
-          onChange: (_, selectedRows) => {
-            const ids = selectedRows.map(item => item.id)
+          onChange: (selectedRowKeys, selectedRows) => {
+            console.log(selectedRowKeys)
             this.setState({
-              ids: ids.join()
+              ids: selectedRowKeys.join()
             })
           }
-        }
+        },
+        rowKey: 'id'
       },
       loading: false,
       pagination: {
@@ -70,6 +72,8 @@ export default class ReView extends Component {
           title: 'modal',
           visible: false,
           confirmLoading: false,
+          width: 520,
+          props: {}
         },
         layout: 'inline',
         initialValues: {},
@@ -101,18 +105,21 @@ export default class ReView extends Component {
         formData = formRef.current.getFieldsValue()
       }
       const { list } = this.state.service
+      const { listBefore, listAfter } = this.state.callback
       const { current: page, pageSize } = this.state.pagination
       const { keyWords } = this.state
       const keyWordsData = {
         [keyWords.name]: keyWords.value
       }
       if (!isFunction(list)) return console.error('service.list 请参考 service')
-      list({
+      const data = {
         ...formData,
         page,
         pageSize,
         ...keyWordsData
-      }).then((res) => {
+      }
+      if (isFunction(listBefore)) listBefore(data)
+      list(data).then((res) => {
         this.setState((state) => ({
           data: res.list,
           pagination: {
@@ -120,6 +127,7 @@ export default class ReView extends Component {
             total: res.total
           }
         }))
+        if (isFunction(listAfter)) listAfter(res)
       }).finally(() => {
         this.setState({
           loading: false
@@ -148,7 +156,7 @@ export default class ReView extends Component {
   renderLayout = (item, key) => {
     switch (item) {
       case 'action':
-        return <Action key={key}/>
+        return <ReAction key={key}/>
       case 'form':
         return <ReForm ref={formRef} key={key}/>
       case 'table':

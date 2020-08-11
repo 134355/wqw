@@ -44,18 +44,18 @@ export function deepMerge (obj1, obj2) {
 /**
  * @description 生成 FormItem
  */
-export function renderFormItem (formItem, formData, func) {
+export function renderFormItem (formItem, formData) {
   return formItem.map(item => {
     let el = ''
    
-    if (isFunction(item.link)) {
-      if (item.link(formData, formItem, func)) return
+    if (isFunction(item.hidden)) {
+      if (hidden.link(formData, formItem)) return
     }
 
     if (isFunction(item.render)) {
       return (
         <Form.Item label={item.label} name={item.name} key={item.name} rules={item.rules} {...item.fiprops}>
-          {item.render()}
+          {item.render(formData, formItem)}
         </Form.Item>
       )
     }
@@ -100,11 +100,6 @@ export function application(self) {
   const app = {
     set (key, data) {
       switch (key) {
-        case 'service':
-          self.setState({
-            service: data
-          })
-          break
         case 'pagination':
           self.setState(state => ({
             pagination: {

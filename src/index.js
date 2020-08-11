@@ -10,23 +10,20 @@ const Demo  = () => {
   const data = [
     {
       id: 1,
-      key: '1',
       name: 'John Brown',
       age: 32,
       address: 'New York No. 1 Lake Park',
       tags: ['nice', 'developer'],
     },
     {
-      id: 2,
-      key: '2',
+      id: 21,
       name: 'Jim Green',
       age: 42,
       address: 'London No. 1 Lake Park',
       tags: ['loser'],
     },
     {
-      id: 3,
-      key: '3',
+      id: 32,
       name: 'Joe Black',
       age: 32,
       address: 'Sidney No. 1 Lake Park',
@@ -66,7 +63,13 @@ const Demo  = () => {
       .set('service', {
         list: list,
         del: list,
-        add: list
+        add: list,
+        edit: list
+      })
+      .set('callback', {
+        listBefore: (data) => {
+          console.log(data, '============')
+        }
       })
       .set('table', {
         columns: [
@@ -77,14 +80,17 @@ const Demo  = () => {
             render: (text) => <a>{text}</a>,
           },
           {
-            title: 'Age',
             dataIndex: 'age',
             key: 'age',
+            tooltip: {
+              title: 'Age',
+              content: '年龄'
+            }
           },
           {
             title: 'Address',
             dataIndex: 'address',
-            key: 'address',
+            key: 'address'
           },
           {
             title: 'Tags',

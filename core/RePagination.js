@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import { Pagination } from 'antd'
 import ReViewContext from './ReViewContext'
 
-export default class ReTable extends Component {
+export default class RePagination extends Component {
   constructor(props) {
     super(props)
   }

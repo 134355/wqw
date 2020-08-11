@@ -4,7 +4,7 @@ import ReViewContext from './ReViewContext'
 
 const { Search } = Input
 
-export default class ReTable extends Component {
+export default class KeyWordsSearch extends Component {
   constructor(props) {
     super(props)
   }

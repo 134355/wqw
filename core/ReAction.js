@@ -5,7 +5,7 @@ import { default as PlusOutlined } from '@ant-design/icons/lib/icons/PlusOutline
 import { default as DeleteOutlined } from '@ant-design/icons/lib/icons/DeleteOutlined'
 import { isString, isFunction } from './utils'
 
-export default class ReTable extends Component {
+export default class ReAction extends Component {
   constructor(props) {
     super(props)
   }

@@ -3,7 +3,7 @@ import { Modal, Form, message } from 'antd'
 import ReViewContext from './ReViewContext'
 import { renderFormItem, isFunction } from './utils'
 
-export default class ReTable extends Component {
+export default class ReModal extends Component {
   constructor(props) {
     super(props)
     this.formRef = React.createRef()
@@ -95,13 +95,15 @@ export default class ReTable extends Component {
 
   render () {
     const { modal, formItem, initialValues, formData } = this.context.state.modalForm
-    const { visible, confirmLoading, title } =  modal
+    const { visible, confirmLoading, title, width, props } =  modal
     return (
       <Modal
+        {...props}
         title={title}
+        width={width}
         visible={visible}
-        onOk={this.handleOk}
         confirmLoading={confirmLoading}
+        onOk={this.handleOk}
         onCancel={this.handleCancel}
       >
         <Form
