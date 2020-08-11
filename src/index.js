@@ -31,7 +31,7 @@ const Demo  = () => {
     },
   ]
   const list = (e) => {
-    console.log(e)
+    console.log('============ list add edit del service ==========')
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         resolve({ list: [...data], total: 97 })
@@ -40,7 +40,7 @@ const Demo  = () => {
   }
 
   const slist = (e) => {
-    console.log('slist')
+    console.log('============ form service ==========')
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         resolve({ list: [{
@@ -51,6 +51,22 @@ const Demo  = () => {
           value: 2
         }]})
       }, 1000)
+    })
+  }
+  const slists = (e) => {
+    console.log('============ tab service ==========')
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve({ list: [
+          {
+            id: 1,
+            name: '图文广告'
+          }, {
+            id: 2,
+            name: '文字广告'
+          }
+        ]})
+      }, 2000)
     })
   }
 
@@ -68,8 +84,14 @@ const Demo  = () => {
       })
       .set('callback', {
         listBefore: (data) => {
-          console.log(data, '============')
+          console.log(data, '====== listBefore ======')
         }
+      })
+      .set('tab', {
+        service: slists,
+        key: 'id',
+        tab: 'name',
+        tabValue: 1
       })
       .set('table', {
         columns: [

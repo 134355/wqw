@@ -7,6 +7,7 @@ import ReTable from './ReTable'
 import RePagination from './RePagination'
 import KeyWordsSearch from './KeyWordsSearch'
 import ReModal from './ReModal'
+import ReTabs from './ReTabs'
 import ReViewContext from './ReViewContext'
 import { application, isFunction } from './utils'
 const formRef = React.createRef()
@@ -22,6 +23,13 @@ export default class ReView extends Component {
       ids: '',
       addOrEdit: true,
       data: [],
+      tab: {
+        is: true,
+        item: [],
+        key: 'key',
+        tab: 'tab',
+        tabValue: ''
+      },
       table: {
         columns: [],
         action: {
@@ -33,7 +41,6 @@ export default class ReView extends Component {
         rowSelection: {
           type: 'checkbox',
           onChange: (selectedRowKeys, selectedRows) => {
-            console.log(selectedRowKeys)
             this.setState({
               ids: selectedRowKeys.join()
             })
@@ -116,6 +123,7 @@ export default class ReView extends Component {
         ...formData,
         page,
         pageSize,
+        tabValue: this.state.tab.tabValue,
         ...keyWordsData
       }
       if (isFunction(listBefore)) listBefore(data)
@@ -156,15 +164,15 @@ export default class ReView extends Component {
   renderLayout = (item, key) => {
     switch (item) {
       case 'action':
-        return <ReAction key={key}/>
+        return <ReAction key={key} />
       case 'form':
-        return <ReForm ref={formRef} key={key}/>
+        return <ReForm ref={formRef} key={key} />
       case 'table':
-        return <ReTable key={key}/>
+        return <ReTable key={key} />
       case 'pagination':
-        return <RePagination key={key}/>
+        return <RePagination key={key} />
       case 'keyWords':
-        return <KeyWordsSearch key={key}/>
+        return <KeyWordsSearch key={key} />
       case 'placeholder':
         return <div className="flex-1" key={key}></div>
     }
@@ -173,11 +181,12 @@ export default class ReView extends Component {
   render() {
     const { layout, loading, isDone } = this.state
     return (
-      <div className="re-view">
+      <div className={this.state.tab.is ? 're-view re-view-no-pt' : 're-view'}>
         <ReViewContext.Provider value={this}>
           {
             isDone && (
               <Spin spinning={loading}>
+                {this.state.tab.is && <ReTabs />}
                 {layout.map((item, index) => {
                   return (
                     <Row key={index} className={{'m-top-15': index !== 0}}>

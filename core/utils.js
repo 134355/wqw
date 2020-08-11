@@ -49,7 +49,7 @@ export function renderFormItem (formItem, formData) {
     let el = ''
    
     if (isFunction(item.hidden)) {
-      if (hidden.link(formData, formItem)) return
+      if (item.hidden(formData, formItem)) return
     }
 
     if (isFunction(item.render)) {
