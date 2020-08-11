@@ -4,7 +4,7 @@ const baseConfig = require('./webpack.base.js');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin"); // 用于将组件的css打包成单独的文件输出到`dist`目录中
 
 const devConfig = {
-  entry: './src/index.js',
+  entry: './core/index.js',
   mode: 'production',
   output: {
     path: path.resolve(__dirname, '../dist'),
@@ -25,6 +25,12 @@ const devConfig = {
       commonjs2: "react-dom",
       commonjs: "react-dom",
       amd: "react-dom"
+    },
+    antd: {
+      root: "Antd",
+      commonjs2: "antd",
+      commonjs: "antd",
+      amd: "antd"
     }
   },
   module: {

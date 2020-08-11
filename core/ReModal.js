@@ -1,44 +1,101 @@
-import React, {Component} from 'react'
-import { Modal } from 'antd'
+import React, { Component } from 'react'
+import { Modal, Form, message } from 'antd'
 import ReViewContext from './ReViewContext'
+import { renderFormItem, isFunction } from './utils'
 
 export default class ReTable extends Component {
   constructor(props) {
     super(props)
+    this.formRef = React.createRef()
   }
 
   static contextType = ReViewContext
 
   handleOk = () => {
-    this.context.setState(state => ({
-      modal: {
-        ...state.modal,
-        confirmLoading: true,
+    this.formRef.current.validateFields().then(values => {
+      const { addOrEdit, service } = this.context.state
+      const { add, edit } = service
+      let func
+      if (addOrEdit) {
+        func = add
+        if (!isFunction(add)) return console.error('service.add 请参考 service')
+      } else {
+        func = edit
+        if (!isFunction(edit)) return console.error('service.edit 请参考 service')
       }
-    }))
- 
-    setTimeout(() => {
+
       this.context.setState(state => ({
-        modal: {
-          ...state.modal,
-          confirmLoading: false,
-          visible: false
+        modalForm: {
+          ...state.modalForm,
+          modal: {
+            ...state.modalForm.modal,
+            confirmLoading: true,
+          }
         }
       }))
-    }, 2000)
+      
+      func(values).then(() => {
+        this.context.setState(state => ({
+          modalForm: {
+            ...state.modalForm,
+            modal: {
+              ...state.modalForm.modal,
+              confirmLoading: false,
+              visible: false
+            }
+          }
+        }))
+        if (addOrEdit) {
+          message.success('添加成功')
+        } else {
+          message.success('编辑成功')
+        }
+        this.context.getTableData()
+      }).catch(() => {
+        this.context.setState(state => ({
+          modalForm: {
+            ...state.modalForm,
+            modal: {
+              ...state.modalForm.modal,
+              confirmLoading: false
+            }
+          }
+        }))
+      })
+    })
   }
 
   handleCancel = () => {
     this.context.setState(state => ({
-      modal: {
-        ...state.modal,
-        visible: false,
+      modalForm: {
+        ...state.modalForm,
+        modal: {
+          ...state.modalForm.modal,
+          visible: false,
+        }
       }
     }))
   }
 
+  handleResetFields = () => {
+    setTimeout(() => {
+      if (this.formRef.current) {
+        this.formRef.current.resetFields()
+      }
+    })
+  }
+
+  handleSetFieldsValue = (data) => {
+    setTimeout(() => {
+      if (this.formRef.current) {
+        this.formRef.current.setFieldsValue(data)
+      }
+    })
+  }
+
   render () {
-    const { visible, confirmLoading, title } = this.context.state.modal
+    const { modal, formItem, initialValues, formData } = this.context.state.modalForm
+    const { visible, confirmLoading, title } =  modal
     return (
       <Modal
         title={title}
@@ -47,7 +104,12 @@ export default class ReTable extends Component {
         confirmLoading={confirmLoading}
         onCancel={this.handleCancel}
       >
-        <p>ModalText</p>
+        <Form
+          ref={this.formRef}
+          initialValues={initialValues}
+        >
+          {renderFormItem(formItem, formData)}
+        </Form>
       </Modal>
     )
   }

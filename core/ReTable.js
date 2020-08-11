@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import { Table, Button, Popconfirm } from 'antd'
-import { FormOutlined, DeleteOutlined } from '@ant-design/icons'
+import { default as FormOutlined } from '@ant-design/icons/lib/icons/FormOutlined'
+import { default as DeleteOutlined } from '@ant-design/icons/lib/icons/DeleteOutlined'
 import ReViewContext from './ReViewContext'
 import { isString } from './utils'
 
@@ -15,12 +16,28 @@ export default class ReTable extends Component {
     this.context.handleDel(row, index)
   }
 
+  handleEdit = (row) => {
+    this.context.setState(state => ({
+      addOrEdit: false,
+      modalForm: {
+        ...state.modalForm,
+        modal: {
+          ...state.modalForm.modal,
+          title: '编辑',
+          visible: true,
+        }
+      }
+    }), () => {
+      this.context.handleSetFieldsValue(row)
+    })
+  }
+
   renderBtn = (action) => {
     action.render = (_, row, index) => {
       return action.item.map((item, key) => {
         const funcs = {
-          update: () => {
-            console.log(row, index)
+          edit: () => {
+            this.handleEdit(row, index)
           },
           del: () => {
             this.handleDel(row, index)
@@ -28,9 +45,9 @@ export default class ReTable extends Component {
         }
         if (isString(item)) {
           switch (item) {
-            case 'update':
+            case 'edit':
               return (
-                <Button type="link" key={key} onClick={funcs.update} className="table-action-btn">
+                <Button type="link" key={key} onClick={funcs.edit} className="table-action-btn">
                   <FormOutlined />
                 </Button>
               )
@@ -57,14 +74,14 @@ export default class ReTable extends Component {
   }
 
   render () {
-    const { table: { columns, action }, data } = this.context.state
+    const { table: { columns, action, rowSelection }, data } = this.context.state
     let newColumns = [...columns]
     if (action.is !== false) {
       newColumns = [...columns, this.renderBtn(action)]
     }
     
     return (
-      <Table className="re-table" columns={newColumns} dataSource={data} pagination={false} />
+      <Table rowSelection={rowSelection} className="re-table" columns={newColumns} dataSource={data} pagination={false} />
     )
   }
 }

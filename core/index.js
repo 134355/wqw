@@ -10,6 +10,7 @@ import ReModal from './ReModal'
 import ReViewContext from './ReViewContext'
 import { application, isFunction } from './utils'
 const formRef = React.createRef()
+const modalFormRef = React.createRef()
 
 export default class ReView extends Component {
   constructor(props) {
@@ -17,6 +18,8 @@ export default class ReView extends Component {
     
     this.state = {
       service: {},
+      ids: '',
+      addOrEdit: true,
       data: [],
       table: {
         columns: [],
@@ -24,7 +27,16 @@ export default class ReView extends Component {
           is: true,
           title: '操作',
           align: 'center',
-          item: ['update', 'del']
+          item: ['edit', 'del']
+        },
+        rowSelection: {
+          type: 'checkbox',
+          onChange: (_, selectedRows) => {
+            const ids = selectedRows.map(item => item.id)
+            this.setState({
+              ids: ids.join()
+            })
+          }
         }
       },
       loading: false,
@@ -53,11 +65,18 @@ export default class ReView extends Component {
           item: ['search', 'reset']
         }
       },
-      modal: {
-        title: 'modal',
-        visible: false,
-        confirmLoading: false,
+      modalForm: {
+        modal: {
+          title: 'modal',
+          visible: false,
+          confirmLoading: false,
+        },
+        layout: 'inline',
+        initialValues: {},
+        formItem: [],
+        formData: {}
       },
+      action: ['add', 'del'],
       layout: [
         ['action', 'placeholder', 'keyWords'],
         ['placeholder', 'form'],
@@ -117,23 +136,32 @@ export default class ReView extends Component {
       this.getTableData()
     })
   }
+
+  handleResetModalForm = () => {
+    modalFormRef.current.handleResetFields()
+  }
+
+  handleSetFieldsValue = (data) => {
+    modalFormRef.current.handleSetFieldsValue(data)
+  }
   
-  renderLayout = (item, index) => {
+  renderLayout = (item, key) => {
     switch (item) {
       case 'action':
-        return <Action key={index}/>
+        return <Action key={key}/>
       case 'form':
-        return <ReForm ref={formRef} key={index}/>
+        return <ReForm ref={formRef} key={key}/>
       case 'table':
-        return <ReTable key={index}/>
+        return <ReTable key={key}/>
       case 'pagination':
-        return <RePagination key={index}/>
+        return <RePagination key={key}/>
       case 'keyWords':
-        return <KeyWordsSearch key={index}/>
+        return <KeyWordsSearch key={key}/>
       case 'placeholder':
-        return <div className="flex-1" key={index}></div>
+        return <div className="flex-1" key={key}></div>
     }
   }
+
   render() {
     const { layout, loading, isDone } = this.state
     return (
@@ -149,7 +177,7 @@ export default class ReView extends Component {
                     </Row>
                   )
                 })}
-                <ReModal />
+                <ReModal ref={modalFormRef} />
               </Spin>
             )
           }

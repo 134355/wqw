@@ -49,23 +49,18 @@ export function renderFormItem (formItem, formData, func) {
     let el = ''
    
     if (isFunction(item.link)) {
-
-      const is = item.link(formData, formItem, func)
-      // func(formData)
-      if (is) {
-        return
-      }
+      if (item.link(formData, formItem, func)) return
     }
+
     if (isFunction(item.render)) {
       return (
-        <Form.Item label={item.label} name={item.name} key={item.name} {...item.fiprops}>
+        <Form.Item label={item.label} name={item.name} key={item.name} rules={item.rules} {...item.fiprops}>
           {item.render()}
         </Form.Item>
       )
     }
     if (isFunction(item.service)) {
       if (!item.isDone) {
-        console.log(item.isDone)
         item.service().then(res => {
           item.options = res.list
         })
@@ -91,7 +86,7 @@ export function renderFormItem (formItem, formData, func) {
         break
     }
     return (
-      <Form.Item label={item.label} name={item.name} key={item.name} {...item.fiprops}>
+      <Form.Item label={item.label} name={item.name} key={item.name} rules={item.rules} {...item.fiprops}>
         {el}
       </Form.Item>
     )
@@ -110,15 +105,6 @@ export function application(self) {
             service: data
           })
           break
-        case 'table':
-          self.setState(state => ({
-            tabel: deepMerge(state.table, data)
-          }))
-          break
-        case 'searchForm':
-          self.setState(state => ({
-            searchForm: deepMerge(state[key], data)
-          }))
         case 'pagination':
           self.setState(state => ({
             pagination: {
@@ -135,8 +121,15 @@ export function application(self) {
             }
           }))
           break
+        case 'action':
+          self.setState(({
+            [key]: data
+          }))
+          break
         default:
-          
+          self.setState(state => ({
+            [key]: deepMerge(state[key], data)
+          }))
           break
       }
       return app

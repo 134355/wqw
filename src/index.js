@@ -1,14 +1,15 @@
-import React from 'react';
-import ReactDom from 'react-dom';
+import React from 'react'
+import ReactDom from 'react-dom'
 import ReView from '../core/index'
-import { Input, Select, Switch, DatePicker, Cascader, Tag } from 'antd'
+import { Input, Select, Switch, DatePicker, Cascader, Tag, Button } from 'antd'
 
-import 'antd/dist/antd.css';
+import 'antd/dist/antd.css'
 import './common/index.scss'
 const viewRef = React.createRef()
 const Demo  = () => {
   const data = [
     {
+      id: 1,
       key: '1',
       name: 'John Brown',
       age: 32,
@@ -16,6 +17,7 @@ const Demo  = () => {
       tags: ['nice', 'developer'],
     },
     {
+      id: 2,
       key: '2',
       name: 'Jim Green',
       age: 42,
@@ -23,13 +25,14 @@ const Demo  = () => {
       tags: ['loser'],
     },
     {
+      id: 3,
       key: '3',
       name: 'Joe Black',
       age: 32,
       address: 'Sidney No. 1 Lake Park',
       tags: ['cool', 'teacher'],
     },
-  ];
+  ]
   const list = (e) => {
     console.log(e)
     return new Promise((resolve, reject) => {
@@ -54,11 +57,16 @@ const Demo  = () => {
     })
   }
 
+  const onGenderChange = value => {
+    console.log(value)
+  }
+
   function handleLoad(app) {
     app
       .set('service', {
         list: list,
-        del: list
+        del: list,
+        add: list
       })
       .set('table', {
         columns: [
@@ -85,15 +93,15 @@ const Demo  = () => {
             render: (tags) => (
               <>
                 {tags.map(tag => {
-                  let color = tag.length > 5 ? 'geekblue' : 'green';
+                  let color = tag.length > 5 ? 'geekblue' : 'green'
                   if (tag === 'loser') {
-                    color = 'volcano';
+                    color = 'volcano'
                   }
                   return (
                     <Tag color={color} key={tag}>
                       {tag.toUpperCase()}
                     </Tag>
-                  );
+                  )
                 })}
               </>
             ),
@@ -108,10 +116,6 @@ const Demo  = () => {
             component: Input,
             props: {
               placeholder: '用户名'
-            },
-            link (e) {
-              console.log(e)
-              return e.username === 'add'
             }
           },
           {
@@ -122,9 +126,6 @@ const Demo  = () => {
             props: {
               placeholder: '请选择',
               style: { width: '110px'},
-              onChange: (e, f) => {
-                viewRef.current.getTableData()
-              }
             },
             options: [
               { value: 1, label: '123' }
@@ -165,19 +166,52 @@ const Demo  = () => {
             name: 'date',
             component: DatePicker
           },
+          {
+            name: 'render',
+            render(h) {
+              return (
+                <Select
+                  placeholder="Select a option and change input text above"
+                  onChange={onGenderChange}
+                  allowClear
+                >
+                  <Select.Option value="male">male</Select.Option>
+                  <Select.Option value="female">female</Select.Option>
+                  <Select.Option value="other">other</Select.Option>
+                </Select>
+              )
+            },
+          }
         ],
         initialValues: {
           username: 'ad'
         }
       })
+      .set('modalForm', {
+        formItem: [
+          {
+            label: '用户名',
+            name: 'name',
+            component: Input,
+            rules: [{required: true}],
+            props: {
+              placeholder: '请输入用户名'
+            }
+          },
+        ]
+      })
       .set('keyWords', {
         value: 'username'
       })
+      .set('action', ['add', 'del'])
       .done()
   } 
   return <div>
-    <ReView onLoad={handleLoad} ref={viewRef}/>
+    <ReView onLoad={handleLoad} ref={viewRef}>
+      <div key="12" slot="action">hello</div>
+      <div key="12" slot="hel">hello</div>
+    </ReView>
   </div>
 }
 
-ReactDom.render(<Demo />, document.getElementById('root'));
+ReactDom.render(<Demo />, document.getElementById('root'))

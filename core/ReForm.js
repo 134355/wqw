@@ -12,7 +12,6 @@ class ReForm extends Component {
   static contextType = ReViewContext
 
   componentWillMount () {
-    console.log(1)
     this.context.setState(state => ({
       searchForm: {
         ...state.searchForm,
@@ -74,7 +73,6 @@ class ReForm extends Component {
   }
 
   handleSetFieldsValue = (data) => {
-    console.log(11111)
     if (this.formRef.current) {
       this.formRef.current.setFieldsValue(data)
     }
@@ -82,7 +80,6 @@ class ReForm extends Component {
 
   render () {
     const { formItem, action, initialValues, formData } = this.context.state.searchForm
-    this.handleSetFieldsValue(formData)
     return (
       <Form
         ref={this.formRef}
@@ -90,7 +87,7 @@ class ReForm extends Component {
         initialValues={initialValues}
         onValuesChange={this.handleForceUpdate}
       >
-        {renderFormItem(formItem, formData, this.handleForceUpdate)}
+        {renderFormItem(formItem, formData, this.handleSetFieldsValue)}
         {this.renderBtn(action)}
       </Form>
     )
