@@ -27,6 +27,7 @@ export default class ReTabs extends Component {
   }
 
   handleChange = (e) => {
+    if (e === this.context.state.tab.tabValue) return
     this.context.setState(state => ({
       tab: {
         ...state.tab,

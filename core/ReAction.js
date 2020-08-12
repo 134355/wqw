@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import { Button, Popconfirm } from 'antd'
+import { Button, Alert } from 'antd'
 import ReViewContext from './ReViewContext'
 import { default as PlusOutlined } from '@ant-design/icons/lib/icons/PlusOutlined'
 import { default as DeleteOutlined } from '@ant-design/icons/lib/icons/DeleteOutlined'
@@ -29,11 +29,15 @@ export default class ReAction extends Component {
   }
 
   handleDel = () => {
-    this.context.handleDel({ id: this.context.state.ids })
+    this.context.setState({
+      clearRowKey: true
+    }, () => {
+      this.context.handleDel({ id: this.context.state.selectedRowKeys.join() })
+    })
   }
 
   renderBtn = () => {
-    const { action } = this.context.state
+    const { action, selectedRowKeys } = this.context.state
     return action.map((item, key) => {
       const funcs = {
         add: () => {
@@ -50,7 +54,6 @@ export default class ReAction extends Component {
               <Button
                 type="primary"
                 icon={<PlusOutlined />}
-                className="m-right-10"
                 onClick={funcs.add}
                 key={key}>
                 添加
@@ -58,22 +61,15 @@ export default class ReAction extends Component {
             )
           case 'del':
             return (
-              <Popconfirm
-                title="您确定要删除选中数据？"
-                okText="确定"
-                cancelText="取消"
-                disabled={!this.context.state.ids}
-                onConfirm={funcs.del}
-                key={key}
-              >
-                <Button
-                  type="primary"
-                  icon={<DeleteOutlined />}
-                  disabled={!this.context.state.ids}
-                  danger>
-                  删除
-                </Button>
-              </Popconfirm>
+              <Button
+                type="primary"
+                icon={<DeleteOutlined />}
+                disabled={!selectedRowKeys.length}
+                danger
+                onClick={funcs.del}
+                key={key}>
+                批量删除
+              </Button>
             )
         }
       }
@@ -85,7 +81,7 @@ export default class ReAction extends Component {
 
   render () {
     return (
-      <div>
+      <div className="flex">
         {this.renderBtn()}        
       </div>
     )

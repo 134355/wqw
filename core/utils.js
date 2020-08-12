@@ -31,6 +31,20 @@ export function isString (value) {
 }
 
 /**
+ * @description 判断是否是Boolean类型
+ */
+export function isBoolean (value) {
+  return toString.call(value) === '[object Boolean]'
+}
+
+/**
+ * @description 克隆
+ */
+export function deepClone (data) {
+  return JSON.parse(JSON.stringify(data))
+}
+
+/**
  * @description 深度合并对象
  */
 export function deepMerge (obj1, obj2) {

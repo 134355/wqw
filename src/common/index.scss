@@ -1,9 +1,6 @@
 @import './flex.scss';
 @import './mp.scss';
-body {
-  background: #dddddd;
-  padding: 20px;
-}
+
 .re-view {
   padding: 15px;
   border-radius: 4px;
@@ -23,6 +20,9 @@ body {
   .question {
     margin-left: 2px;
     color: #999999;
+  }
+  .ant-btn + .ant-btn {
+    margin-left: 10px;
   }
   .ant-pagination-options-quick-jumper input {
     margin-right: 0;

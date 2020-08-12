@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import { Row, Spin, message } from 'antd'
-
+import { Row, Spin, message, Modal } from 'antd'
+import { default as ExclamationCircleOutlined } from '@ant-design/icons/lib/icons/ExclamationCircleOutlined'
 import ReAction from './ReAction'
 import ReForm from './ReForm'
 import ReTable from './ReTable'
@@ -9,7 +9,9 @@ import KeyWordsSearch from './KeyWordsSearch'
 import ReModal from './ReModal'
 import ReTabs from './ReTabs'
 import ReViewContext from './ReViewContext'
-import { application, isFunction } from './utils'
+import { application, isFunction, deepClone } from './utils'
+import '../src/common/index.scss'
+
 const formRef = React.createRef()
 const modalFormRef = React.createRef()
 
@@ -18,18 +20,19 @@ export default class ReView extends Component {
     super(props)
     
     this.state = {
+      loading: false,
       service: {},
       callback: {},
-      ids: '',
       addOrEdit: true,
-      data: [],
       tab: {
         is: true,
         item: [],
         key: 'key',
         tab: 'tab',
+        tabKey: 'type',
         tabValue: ''
       },
+      data: [],
       table: {
         columns: [],
         action: {
@@ -38,17 +41,10 @@ export default class ReView extends Component {
           align: 'center',
           item: ['edit', 'del']
         },
-        rowSelection: {
-          type: 'checkbox',
-          onChange: (selectedRowKeys, selectedRows) => {
-            this.setState({
-              ids: selectedRowKeys.join()
-            })
-          }
-        },
         rowKey: 'id'
       },
-      loading: false,
+      selectedRowKeys: [],
+      clearRowKey: false,
       pagination: {
         total: 0,
         current: 1,
@@ -71,7 +67,7 @@ export default class ReView extends Component {
         formData: {},
         action: {
           is: true,
-          item: ['search', 'reset']
+          item: ['reset', 'search']
         }
       },
       modalForm: {
@@ -90,7 +86,7 @@ export default class ReView extends Component {
       action: ['add', 'del'],
       layout: [
         ['action', 'placeholder', 'keyWords'],
-        ['placeholder', 'form'],
+        ['form'],
         ['table'],
         ['placeholder', 'pagination'],
       ],
@@ -114,28 +110,35 @@ export default class ReView extends Component {
       const { list } = this.state.service
       const { listBefore, listAfter } = this.state.callback
       const { current: page, pageSize } = this.state.pagination
-      const { keyWords } = this.state
+      const { keyWords, tab } = this.state
+      const { tabKey, tabValue } = tab
       const keyWordsData = {
         [keyWords.name]: keyWords.value
       }
       if (!isFunction(list)) return console.error('service.list 请参考 service')
       const data = {
-        ...formData,
         page,
         pageSize,
-        tabValue: this.state.tab.tabValue,
+        [tabKey]: tabValue,
+        ...formData,
         ...keyWordsData
       }
-      if (isFunction(listBefore)) listBefore(data)
-      list(data).then((res) => {
+      let newData
+      if (isFunction(listBefore)) {
+        newData = listBefore(data)
+      }
+      list(newData).then((res) => {
+        let newRes = res
+        if (isFunction(listAfter)) {
+          newRes = listAfter(res)
+        }
         this.setState((state) => ({
-          data: res.list,
+          data: newRes.list,
           pagination: {
             ...state.pagination,
-            total: res.total
+            total: newRes.total
           }
         }))
-        if (isFunction(listAfter)) listAfter(res)
       }).finally(() => {
         this.setState({
           loading: false
@@ -145,11 +148,44 @@ export default class ReView extends Component {
   }
 
   handleDel = (row) => {
-    const { del } = this.state.service
+    const { service: { del }, selectedRowKeys, clearRowKey } = this.state
     if (!isFunction(del)) return console.error('service.del 请参考 service')
-    del(row.id).then(() => {
-      message.success('删除成功')
-      this.getTableData()
+     const modal = Modal.confirm({
+      title: '温馨提示',
+      icon: <ExclamationCircleOutlined />,
+      content: '您确定要删除选中数据？',
+      okText: '确定',
+      cancelText: '取消',
+      onOk: (close) => {
+        modal.update({
+          okButtonProps: {
+            loading: true
+          }
+        })
+        del(row.id).then(() => {
+          message.success('删除成功')
+          if (clearRowKey) {
+            this.setState({
+              selectedRowKeys: [],
+              clearRowKey: false
+            })
+          } else {
+            const rowKeys = deepClone(selectedRowKeys)
+            if (rowKeys.includes(row.id)) {
+              const index = rowKeys.indexOf(row.id)
+              if (index !== -1) {
+                rowKeys.splice(index, 1)
+                this.setState({
+                  selectedRowKeys: rowKeys
+                })
+              }
+            }
+          }
+          this.getTableData()
+        }).finally(() => {
+          close()
+        })
+      }
     })
   }
 
@@ -162,6 +198,11 @@ export default class ReView extends Component {
   }
   
   renderLayout = (item, key) => {
+    if (isFunction(item)) {
+      return (
+        <div key={key}>{item()}</div>
+      )
+    }
     switch (item) {
       case 'action':
         return <ReAction key={key} />

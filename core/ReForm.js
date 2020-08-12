@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 import { Form, Button } from 'antd'
+import { default as SearchOutlined } from '@ant-design/icons/lib/icons/SearchOutlined'
+import { default as SyncOutlined } from '@ant-design/icons/lib/icons/SyncOutlined'
 import ReViewContext from './ReViewContext'
 import { renderFormItem, isFunction } from './utils'
 
@@ -42,12 +44,14 @@ class ReForm extends Component {
         case 'search':
           return (
             <Button type="primary" onClick={this.context.getTableData} key={key}>
+              <SearchOutlined />
               查询
             </Button>
           )
         case 'reset':
           return (
-            <Button className="m-left-10" onClick={this.handleReset} key={key}>
+            <Button onClick={this.handleReset} key={key}>
+              <SyncOutlined />
               重置
             </Button>
           )
@@ -87,7 +91,7 @@ class ReForm extends Component {
         initialValues={initialValues}
         onValuesChange={this.handleForceUpdate}
       >
-        {renderFormItem(formItem, formData, this.handleSetFieldsValue)}
+        {renderFormItem(formItem, formData)}
         {this.renderBtn(action)}
       </Form>
     )

@@ -1,10 +1,10 @@
 import React from 'react'
 import ReactDom from 'react-dom'
 import ReView from '../core/index'
-import { Input, Select, Switch, DatePicker, Cascader, Tag, Button } from 'antd'
+import { Input, Select, Switch, DatePicker, Cascader, Tag } from 'antd'
 
 import 'antd/dist/antd.css'
-import './common/index.scss'
+
 const viewRef = React.createRef()
 const Demo  = () => {
   const data = [
@@ -31,7 +31,7 @@ const Demo  = () => {
     },
   ]
   const list = (e) => {
-    console.log('============ list add edit del service ==========')
+    console.log(e, '============ list add edit del service ==========')
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         resolve({ list: [...data], total: 97 })
@@ -85,16 +85,25 @@ const Demo  = () => {
       .set('callback', {
         listBefore: (data) => {
           console.log(data, '====== listBefore ======')
+        },
+        editBefore: (data) => {
+          data.name = '123'
+        },
+        submitBefore: (data) => {
+          data.name = '1213'
         }
       })
       .set('tab', {
         service: slists,
         key: 'id',
         tab: 'name',
-        tabValue: 1
+        tabValue: ''
       })
       .set('table', {
         columns: [
+          {
+            type: 'checkbox'
+          },
           {
             title: 'Name',
             dataIndex: 'name',
@@ -112,7 +121,10 @@ const Demo  = () => {
           {
             title: 'Address',
             dataIndex: 'address',
-            key: 'address'
+            key: 'address',
+            hidden ({ tab }) {
+              return tab == '1'
+            }
           },
           {
             title: 'Tags',
@@ -231,7 +243,6 @@ const Demo  = () => {
       .set('keyWords', {
         value: 'username'
       })
-      .set('action', ['add', 'del'])
       .done()
   } 
   return <div>

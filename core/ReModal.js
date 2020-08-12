@@ -33,7 +33,10 @@ export default class ReModal extends Component {
           }
         }
       }))
-      
+
+      const { submitBefore } = this.context.state.callback
+      if (isFunction(submitBefore)) submitBefore(values)
+      console.log(values)
       func(values).then(() => {
         this.context.setState(state => ({
           modalForm: {
@@ -94,7 +97,8 @@ export default class ReModal extends Component {
   }
 
   render () {
-    const { modal, formItem, initialValues, formData } = this.context.state.modalForm
+    const { addOrEdit, modalForm, tab } = this.context.state
+    const { modal, formItem, initialValues, formData } = modalForm
     const { visible, confirmLoading, title, width, props } =  modal
     return (
       <Modal
@@ -110,7 +114,7 @@ export default class ReModal extends Component {
           ref={this.formRef}
           initialValues={initialValues}
         >
-          {renderFormItem(formItem, formData)}
+          {renderFormItem(formItem, formData, { tab: tab.tabValue, addOrEdit })}
         </Form>
       </Modal>
     )
