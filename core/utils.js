@@ -56,6 +56,23 @@ export function deepMerge (obj1, obj2) {
 }
 
 /**
+ * @description 参数解析
+ */
+export function parseParams (obj) {
+  const params = {}
+  Object.keys(obj).forEach(key => {
+    if (key.includes('$$')) {
+      key.split('$$').forEach((k, i) => {
+        params[k] = (obj[key] && (obj[key][i] || '')) || ''
+      })
+    } else {
+      params[key] = obj[key]
+    }
+  })
+  return deepClone(params)
+}
+
+/**
  * @description 生成 FormItem
  */
 export function renderFormItem (formItem, formData) {

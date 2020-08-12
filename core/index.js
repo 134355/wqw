@@ -9,7 +9,7 @@ import KeyWordsSearch from './KeyWordsSearch'
 import ReModal from './ReModal'
 import ReTabs from './ReTabs'
 import ReViewContext from './ReViewContext'
-import { application, isFunction, deepClone } from './utils'
+import { application, isFunction, deepClone, parseParams } from './utils'
 import '../src/common/index.scss'
 
 const formRef = React.createRef()
@@ -116,14 +116,14 @@ export default class ReView extends Component {
         [keyWords.name]: keyWords.value
       }
       if (!isFunction(list)) return console.error('service.list 请参考 service')
-      const data = {
+      const data = parseParams({
         page,
         pageSize,
         [tabKey]: tabValue,
         ...formData,
         ...keyWordsData
-      }
-      let newData
+      })
+      let newData = data
       if (isFunction(listBefore)) {
         newData = listBefore(data)
       }

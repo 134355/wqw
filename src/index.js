@@ -2,6 +2,9 @@ import React from 'react'
 import ReactDom from 'react-dom'
 import ReView from '../core/index'
 import { Input, Select, Switch, DatePicker, Cascader, Tag } from 'antd'
+import ReDatePicker from '../core/ReDatePicker'
+
+const { ReRangePicker } = ReDatePicker
 
 import 'antd/dist/antd.css'
 
@@ -85,12 +88,14 @@ const Demo  = () => {
       .set('callback', {
         listBefore: (data) => {
           console.log(data, '====== listBefore ======')
+          return data
         },
         editBefore: (data) => {
           data.name = '123'
+          return data
         },
         submitBefore: (data) => {
-          data.name = '1213'
+          return data
         }
       })
       .set('tab', {
@@ -204,7 +209,15 @@ const Demo  = () => {
           },
           {
             name: 'date',
-            component: DatePicker
+            component: DatePicker,
+            props: {
+              value: '2021-08-08',
+              onChange: (value, dateString) => {
+                console.log('Selected Time: ', value); 
+                value = dateString
+                console.log('Formatted Selected Time: ', dateString);
+              }
+            }
           },
           {
             name: 'render',
@@ -221,6 +234,17 @@ const Demo  = () => {
                 </Select>
               )
             },
+          },
+          {
+            name: 'timestamp',
+            component: ReDatePicker,
+            props: {
+              valueFormat: 'timestamp'
+            }
+          },
+          {
+            name: 'startData$$endDate',
+            component: ReRangePicker
           }
         ],
         initialValues: {
@@ -245,12 +269,11 @@ const Demo  = () => {
       })
       .done()
   } 
-  return <div>
-    <ReView onLoad={handleLoad} ref={viewRef}>
-      <div key="12" slot="action">hello</div>
-      <div key="12" slot="hel">hello</div>
-    </ReView>
-  </div>
+  return (
+    <div>
+      <ReView onLoad={handleLoad} ref={viewRef} />
+    </div>
+  )
 }
 
 ReactDom.render(<Demo />, document.getElementById('root'))

@@ -4,7 +4,7 @@ import { default as FormOutlined } from '@ant-design/icons/lib/icons/FormOutline
 import { default as DeleteOutlined } from '@ant-design/icons/lib/icons/DeleteOutlined'
 import { default as QuestionCircleOutlined } from '@ant-design/icons/lib/icons/QuestionCircleOutlined'
 import ReViewContext from './ReViewContext'
-import { isString, isObject, isFunction, isBoolean } from './utils'
+import { isString, isObject, isFunction, isBoolean, deepClone } from './utils'
 
 export default class ReTable extends Component {
   constructor(props) {
@@ -34,8 +34,12 @@ export default class ReTable extends Component {
       }
     }), () => {
       const { editBefore } = this.context.state.callback
-      if (isFunction(editBefore)) editBefore(row)
-      this.context.handleSetFieldsValue(row)
+      const data = deepClone(row)
+      let newData = data
+      if (isFunction(editBefore)) {
+        newData = editBefore(data)
+      }
+      this.context.handleSetFieldsValue(newData)
     })
   }
 

@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Modal, Form, message } from 'antd'
 import ReViewContext from './ReViewContext'
-import { renderFormItem, isFunction } from './utils'
+import { renderFormItem, isFunction, deepClone } from './utils'
 
 export default class ReModal extends Component {
   constructor(props) {
@@ -35,9 +35,12 @@ export default class ReModal extends Component {
       }))
 
       const { submitBefore } = this.context.state.callback
-      if (isFunction(submitBefore)) submitBefore(values)
-      console.log(values)
-      func(values).then(() => {
+      const data = deepClone(values)
+      let newData = data
+      if (isFunction(submitBefore)) {
+        newData = submitBefore(data)
+      }
+      func(newData).then(() => {
         this.context.setState(state => ({
           modalForm: {
             ...state.modalForm,

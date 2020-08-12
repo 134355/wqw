@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, { Component } from 'react'
 import { Button, Alert } from 'antd'
 import ReViewContext from './ReViewContext'
 import { default as PlusOutlined } from '@ant-design/icons/lib/icons/PlusOutlined'
