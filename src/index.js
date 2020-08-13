@@ -17,6 +17,8 @@ const Demo  = () => {
       age: 32,
       address: 'New York No. 1 Lake Park',
       tags: ['nice', 'developer'],
+      startDate: '2020-08-09',
+      endDate: '2020-08-29'
     },
     {
       id: 21,
@@ -262,6 +264,11 @@ const Demo  = () => {
               placeholder: '请输入用户名'
             }
           },
+          {
+            label: '时间',
+            name: 'startDate$$endDate',
+            component: ReRangePicker
+          }
         ]
       })
       .set('keyWords', {

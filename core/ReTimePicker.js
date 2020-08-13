@@ -1,8 +1,8 @@
 import React from 'react'
-import { DatePicker } from 'antd'
+import { TimePicker } from 'antd'
 import moment from 'moment'
 
-const { RangePicker } = DatePicker
+const { RangePicker } = TimePicker
 
 
 function transformMoment (value, format) {
@@ -32,7 +32,7 @@ function transformFormat (value, valueFormat) {
   }
 }
 
-const ReDatePicker = ({ value, onChange, format, valueFormat = 'YYYY-MM-DD HH:mm:ss', ...props }) => {
+const ReTimePicker  = ({ value, onChange, format, valueFormat = 'YYYY-MM-DD HH:mm:ss', ...props }) => {
   const transformValue = transformMoment(value, format)
 
   const transformOnChange = val => {
@@ -40,7 +40,7 @@ const ReDatePicker = ({ value, onChange, format, valueFormat = 'YYYY-MM-DD HH:mm
   }
 
   return (
-    <DatePicker
+    <TimePicker 
       {...props}
       value={transformValue}
       onChange={transformOnChange}
@@ -64,6 +64,6 @@ const ReRangePicker = ({ value, onChange, format, valueFormat = 'YYYY-MM-DD HH:m
   )
 }
 
-ReDatePicker.ReRangePicker = ReRangePicker
+ReTimePicker.ReRangePicker = ReRangePicker
 
-export default ReDatePicker
+export default ReTimePicker

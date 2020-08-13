@@ -39,6 +39,18 @@ export default class ReTable extends Component {
       if (isFunction(editBefore)) {
         newData = editBefore(data)
       }
+      const { formData } = this.context.state.modalForm
+      Object.keys(formData).forEach(key => {
+        if (key.includes('$$')) {
+          const arr = []
+          key.split('$$').forEach((k, i) => {
+            arr[i] = row[k]
+          })
+          newData[key] = arr
+        } else {
+          newData[key] = row[key]
+        }
+      })
       this.context.handleSetFieldsValue(newData)
     })
   }

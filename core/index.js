@@ -78,7 +78,10 @@ export default class ReView extends Component {
           width: 520,
           props: {}
         },
-        layout: 'inline',
+        layout: {
+          labelCol: { span: 5 },
+          wrapperCol: { span: 19 }
+        },
         initialValues: {},
         formItem: [],
         formData: {}
@@ -103,26 +106,10 @@ export default class ReView extends Component {
       loading: true
     })
     setTimeout(() => {
-      let formData = {}
-      if (formRef.current) {
-        formData = formRef.current.getFieldsValue()
-      }
       const { list } = this.state.service
       const { listBefore, listAfter } = this.state.callback
-      const { current: page, pageSize } = this.state.pagination
-      const { keyWords, tab } = this.state
-      const { tabKey, tabValue } = tab
-      const keyWordsData = {
-        [keyWords.name]: keyWords.value
-      }
       if (!isFunction(list)) return console.error('service.list 请参考 service')
-      const data = parseParams({
-        page,
-        pageSize,
-        [tabKey]: tabValue,
-        ...formData,
-        ...keyWordsData
-      })
+      const data = parseParams(this.getFormData())
       let newData = data
       if (isFunction(listBefore)) {
         newData = listBefore(data)
@@ -145,6 +132,23 @@ export default class ReView extends Component {
         })
       })
     })
+  }
+
+  getFormData = () => {
+    const { current: page, pageSize } = this.state.pagination
+    let formData = {}
+    if (formRef.current) {
+      formData = formRef.current.getFieldsValue()
+    }
+    const { keyWords, tab } = this.state
+    const { tabKey, tabValue } = tab
+    return {
+      page,
+      pageSize,
+      [tabKey]: tabValue,
+      [keyWords.name]: keyWords.value,
+      ...formData
+    }
   }
 
   handleDel = (row) => {

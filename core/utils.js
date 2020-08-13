@@ -31,6 +31,13 @@ export function isString (value) {
 }
 
 /**
+ * @description 判断是否是Undefined类型
+ */
+export function isUndefined (value) {
+  return toString.call(value) === '[object Undefined]'
+}
+
+/**
  * @description 判断是否是Boolean类型
  */
 export function isBoolean (value) {
@@ -131,25 +138,16 @@ export function application(self) {
   const app = {
     set (key, data) {
       switch (key) {
-        case 'pagination':
+        case 'modalForm':
+          console.log(data)
+          const formData = {}
+          data.formItem.forEach(item => {
+            const val = isUndefined(item.value) ? '' : item.value
+            formData[item.name] = val
+          })
+          data.formData = formData
           self.setState(state => ({
-            pagination: {
-              ...state.pagination,
-              ...data
-            }
-          }))
-          break
-        case 'keyWords':
-          self.setState(state => ({
-            keyWords: {
-              ...state.keyWords,
-              ...data
-            }
-          }))
-          break
-        case 'action':
-          self.setState(({
-            [key]: data
+            [key]: deepMerge(state[key], data)
           }))
           break
         default:
@@ -163,8 +161,9 @@ export function application(self) {
     done () {
       self.setState(({
         isDone: true
-      }))
-      self.getTableData()
+      }), () => {
+        self.getTableData()
+      })
     }
   }
   return app

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Button, Alert } from 'antd'
+import { Button } from 'antd'
 import ReViewContext from './ReViewContext'
 import { default as PlusOutlined } from '@ant-design/icons/lib/icons/PlusOutlined'
 import { default as DeleteOutlined } from '@ant-design/icons/lib/icons/DeleteOutlined'
