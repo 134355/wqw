@@ -62,9 +62,9 @@ export default class ReView extends Component {
       },
       searchForm: {
         layout: 'inline',
-        initialValues: {},
         formItem: [],
         formData: {},
+        defaultData: {},
         action: {
           is: true,
           item: ['reset', 'search']
@@ -84,7 +84,8 @@ export default class ReView extends Component {
         },
         initialValues: {},
         formItem: [],
-        formData: {}
+        formData: {},
+        defaultData: {}
       },
       action: ['add', 'del'],
       layout: [
@@ -117,7 +118,7 @@ export default class ReView extends Component {
       list(newData).then((res) => {
         let newRes = res
         if (isFunction(listAfter)) {
-          newRes = listAfter(res)
+          newRes = listAfter(res) || {}
         }
         this.setState((state) => ({
           data: newRes.list,
@@ -134,8 +135,19 @@ export default class ReView extends Component {
     })
   }
 
+  getTableDataf = () => {
+    this.setState((state) => ({
+      pagination: {
+        ...state.pagination,
+        current: 1,
+      }
+    }), () => {
+      this.getTableData()
+    })
+  }
+
   getFormData = () => {
-    const { current: page, pageSize } = this.state.pagination
+    const { current: page, pageSize: limit } = this.state.pagination
     let formData = {}
     if (formRef.current) {
       formData = formRef.current.getFieldsValue()
@@ -144,7 +156,7 @@ export default class ReView extends Component {
     const { tabKey, tabValue } = tab
     return {
       page,
-      pageSize,
+      limit,
       [tabKey]: tabValue,
       [keyWords.name]: keyWords.value,
       ...formData

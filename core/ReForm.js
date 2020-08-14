@@ -13,18 +13,9 @@ class ReForm extends Component {
 
   static contextType = ReViewContext
 
-  componentWillMount () {
-    this.context.setState(state => ({
-      searchForm: {
-        ...state.searchForm,
-        formData: this.getFieldsValue()
-      }
-    }))
-  }
-
   handleReset = () => {
     this.formRef.current.resetFields()
-    this.context.getTableData()
+    this.context.getTableDataf()
   }
 
   getFieldsValue = () => {
@@ -35,7 +26,7 @@ class ReForm extends Component {
     if (!action.is) return
     if(isFunction(action.render)) {
       return action.render({
-        getTableData: this.context.getTableData,
+        getTableData: this.context.getTableDataf,
         reset: this.handleReset
       })
     }
@@ -43,7 +34,7 @@ class ReForm extends Component {
       switch (item) {
         case 'search':
           return (
-            <Button type="primary" onClick={this.context.getTableData} key={key}>
+            <Button type="primary" onClick={this.context.getTableDataf} key={key}>
               <SearchOutlined />
               查询
             </Button>
@@ -83,15 +74,16 @@ class ReForm extends Component {
   }
 
   render () {
-    const { formItem, action, initialValues, formData } = this.context.state.searchForm
+    const { addOrEdit, searchForm, tab } = this.context.state
+    const { formItem, action, formData, defaultData } = searchForm
     return (
       <Form
         ref={this.formRef}
         layout="inline"
-        initialValues={initialValues}
+        initialValues={defaultData}
         onValuesChange={this.handleForceUpdate}
       >
-        {renderFormItem(formItem, formData)}
+        {renderFormItem({ formItem, formData, tab: tab.tabValue, addOrEdit })}
         {this.renderBtn(action)}
       </Form>
     )

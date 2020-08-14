@@ -45,6 +45,20 @@ export function isBoolean (value) {
 }
 
 /**
+ * @description 判断是否是false
+ */
+export function isFalse (value) {
+  return value === false
+}
+
+/**
+ * @description 判断是否是true
+ */
+export function isTrue (value) {
+  return value === true
+}
+
+/**
  * @description 克隆
  */
 export function deepClone (data) {
@@ -82,18 +96,20 @@ export function parseParams (obj) {
 /**
  * @description 生成 FormItem
  */
-export function renderFormItem (formItem, formData) {
+export function renderFormItem ({ formItem, formData, tab, addOrEdit }) {
   return formItem.map(item => {
     let el = ''
+
+    const { hidden, render, label, name, rules, fiprops, dataDict = { label: 'label', value: 'value' } } = item
    
-    if (isFunction(item.hidden)) {
-      if (item.hidden(formData, formItem)) return
+    if (isFunction(hidden)) {
+      if (hidden({ formItem, formData, tab, addOrEdit })) return
     }
 
-    if (isFunction(item.render)) {
+    if (isFunction(render)) {
       return (
-        <Form.Item label={item.label} name={item.name} key={item.name} rules={item.rules} {...item.fiprops}>
-          {item.render(formData, formItem)}
+        <Form.Item label={label} name={name} key={name} rules={rules} {...fiprops}>
+          {render({ formItem, formData, tab, addOrEdit })}
         </Form.Item>
       )
     }
@@ -110,7 +126,7 @@ export function renderFormItem (formItem, formData) {
         el = (
           <Select {...item.props}>
             {item.options.map(e => {
-              return <Select.Option value={e.value} key={e.value}>{e.label}</Select.Option>
+              return <Select.Option value={e[dataDict.value]} key={e[dataDict.value]}>{e[dataDict.label]}</Select.Option>
             })}
           </Select>
         )
@@ -138,14 +154,23 @@ export function application(self) {
   const app = {
     set (key, data) {
       switch (key) {
+        case 'action':
+        case 'layout':
+          self.setState(({
+            [key]: data
+          }))
+          break
+        case 'searchForm':
         case 'modalForm':
-          console.log(data)
           const formData = {}
+          const defaultData = {}
           data.formItem.forEach(item => {
-            const val = isUndefined(item.value) ? '' : item.value
+            const val = isUndefined(item.value) ? null : item.value
             formData[item.name] = val
+            defaultData[item.name] = val
           })
           data.formData = formData
+          data.defaultData = defaultData
           self.setState(state => ({
             [key]: deepMerge(state[key], data)
           }))

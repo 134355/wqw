@@ -34,7 +34,7 @@ export default class ReTabs extends Component {
         tabValue: e
       }
     }), () => {
-      this.context.getTableData()
+      this.context.getTableDataf()
     })
   }
 

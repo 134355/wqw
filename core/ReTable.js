@@ -4,7 +4,7 @@ import { default as FormOutlined } from '@ant-design/icons/lib/icons/FormOutline
 import { default as DeleteOutlined } from '@ant-design/icons/lib/icons/DeleteOutlined'
 import { default as QuestionCircleOutlined } from '@ant-design/icons/lib/icons/QuestionCircleOutlined'
 import ReViewContext from './ReViewContext'
-import { isString, isObject, isFunction, isBoolean, deepClone } from './utils'
+import { isString, isObject, isFunction, isBoolean, isTrue, deepClone } from './utils'
 
 export default class ReTable extends Component {
   constructor(props) {
@@ -56,23 +56,33 @@ export default class ReTable extends Component {
   }
 
   renderCol = (item, tabValue) => {
-    if (isObject(item.tooltip)) {
-      item.title = (
-        <Tooltip title={item.tooltip.content}>
-          {item.tooltip.title}
+    const newItem = { ...item }
+
+    let is = false
+    if (isFunction(newItem.hidden)) {
+      is = newItem.hidden({ tab: tabValue })
+    }
+    if (isBoolean(newItem.hidden)) {
+      is = newItem.hidden
+    }
+    if (is) return
+
+    if (isObject(newItem.tooltip)) {
+      newItem.title = (
+        <Tooltip title={newItem.tooltip.content}>
+          {item.title}
           <QuestionCircleOutlined className="question" />
         </Tooltip>
       )
     }
-    let is = false
-    if (isFunction(item.hidden)) {
-      is = item.hidden({ tab: tabValue })
+
+    if (isFunction(newItem.render)) {
+      newItem.render = (...ags) => {
+        return item.render(...ags, tabValue)
+      }
     }
-    if (isBoolean(item.hidden)) {
-      is = item.hidden
-    }
-    if (is) return
-    return item
+    
+    return newItem
   }
 
   renderBtn = (action) => {

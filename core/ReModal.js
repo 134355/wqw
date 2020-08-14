@@ -56,7 +56,7 @@ export default class ReModal extends Component {
         } else {
           message.success('编辑成功')
         }
-        this.context.getTableData()
+        this.context.getTableDataf()
       }).catch(() => {
         this.context.setState(state => ({
           modalForm: {
@@ -101,7 +101,7 @@ export default class ReModal extends Component {
 
   render () {
     const { addOrEdit, modalForm, tab } = this.context.state
-    const { modal, formItem, initialValues, formData, layout } = modalForm
+    const { modal, formItem, defaultData, formData, layout } = modalForm
     const { visible, confirmLoading, title, width, props } =  modal
     return (
       <Modal
@@ -116,10 +116,10 @@ export default class ReModal extends Component {
         <Form
           {...layout}
           ref={this.formRef}
-          initialValues={initialValues}
+          initialValues={defaultData}
           layout={layout}
         >
-          {renderFormItem(formItem, formData, { tab: tab.tabValue, addOrEdit })}
+          {renderFormItem({ formItem, formData, tab: tab.tabValue, addOrEdit })}
         </Form>
       </Modal>
     )
