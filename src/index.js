@@ -102,7 +102,7 @@ getBannerListOptions().then(res => {
   Object.keys(data).forEach(key => {
     adList.push({
       label: data[key],
-      value: key
+      value: +key
     })
   })
 })
@@ -113,7 +113,7 @@ getRuleListOptions().then(res => {
     Object.keys(data).forEach(key => {
       ruleList.push({
         label: data[key],
-        value: key
+        value: +key
       })
     })
   }
@@ -142,6 +142,7 @@ const Demo  = () => {
         }
       })
       .set('tab', {
+        is: true,
         service: getTabList,
         key: 'id',
         tab: 'name',
@@ -288,7 +289,7 @@ const Demo  = () => {
             component: Input,
             props: {
               placeholder: '输入关键字查询',
-            },
+            }
           }
         ]
       })

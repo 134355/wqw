@@ -246,7 +246,7 @@ export default class ReView extends Component {
                 {this.state.tab.is && <ReTabs />}
                 {layout.map((item, index) => {
                   return (
-                    <Row key={index} className={{'m-top-15': index !== 0}}>
+                    <Row key={index} className={index !== 0 ? 'm-top-15' : ''}>
                       {item.map(this.renderLayout)}
                     </Row>
                   )

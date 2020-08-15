@@ -99,6 +99,18 @@ export default class ReModal extends Component {
     })
   }
 
+  handleForceUpdate = (_, data) => {
+    this.context.setState(state => ({
+      modalForm: {
+        ...state.modalForm,
+        formData: {
+          ...state.modalForm.formData,
+          ...data
+        }
+      }
+    }))
+  }
+
   render () {
     const { addOrEdit, modalForm, tab } = this.context.state
     const { modal, formItem, defaultData, formData, layout } = modalForm
@@ -118,6 +130,7 @@ export default class ReModal extends Component {
           ref={this.formRef}
           initialValues={defaultData}
           layout={layout}
+          onValuesChange={this.handleForceUpdate}
         >
           {renderFormItem({ formItem, formData, tab: tab.tabValue, addOrEdit })}
         </Form>

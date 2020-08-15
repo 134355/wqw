@@ -94,6 +94,27 @@ export function parseParams (obj) {
 }
 
 /**
+ * @description rendenEL
+ */
+export function rendenEL (component, props, children) {
+  let childrenEL = children
+  if (isArray(children)) {
+    childrenEL = children.map(item => {
+      return rendenEL(
+        item.component,
+        item.props,
+        item.children,
+      )
+    })
+  }
+   return React.createElement(
+    component,
+    props,
+    childrenEL,
+  )
+}
+
+/**
  * @description 生成 FormItem
  */
 export function renderFormItem ({ formItem, formData, tab, addOrEdit }) {
@@ -132,7 +153,7 @@ export function renderFormItem ({ formItem, formData, tab, addOrEdit }) {
         )
         break
       default:
-        el = React.createElement(
+        el = rendenEL(
           item.component,
           item.props,
           item.children,
