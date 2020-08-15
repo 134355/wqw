@@ -107,7 +107,7 @@ export function rendenEL (component, props, children) {
       )
     })
   }
-   return React.createElement(
+  return React.createElement(
     component,
     props,
     childrenEL,
